@@ -1,0 +1,21 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="gold" x1="10" y1="7" x2="54" y2="58" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F2CC46"/>
+      <stop offset="1" stop-color="#C99608"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="2" y="2" width="60" height="60" rx="15" fill="#090A0C"/>
+  <rect x="7" y="7" width="50" height="50" rx="12" fill="url(#gold)"/>
+
+  <!-- Silueta frontal de automóvil, pensada para seguir siendo legible a 16–32 px -->
+  <path d="M18 32.5L21.8 23.8C22.5 22.1 24.2 21 26.1 21H37.9C39.8 21 41.5 22.1 42.2 23.8L46 32.5" stroke="#111318" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M16.5 32H47.5C49.4 32 51 33.6 51 35.5V43.2C51 45 49.5 46.5 47.7 46.5H16.3C14.5 46.5 13 45 13 43.2V35.5C13 33.6 14.6 32 16.5 32Z" fill="#111318"/>
+  <path d="M23.3 25H40.7L43.3 32H20.7L23.3 25Z" fill="#D4A817"/>
+  <path d="M18 37H24" stroke="#F7D85B" stroke-width="2.8" stroke-linecap="round"/>
+  <path d="M40 37H46" stroke="#F7D85B" stroke-width="2.8" stroke-linecap="round"/>
+  <rect x="19" y="43" width="7" height="6" rx="2.5" fill="#111318"/>
+  <rect x="38" y="43" width="7" height="6" rx="2.5" fill="#111318"/>
+  <path d="M28 39.5H36" stroke="#D4A817" stroke-width="2.2" stroke-linecap="round"/>
+</svg>
