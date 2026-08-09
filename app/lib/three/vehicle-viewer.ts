@@ -68,8 +68,7 @@ export class VehicleScene {
     this.renderer.setClearColor(0xf2f4f7, 1);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.96;
-    this.renderer.shadowMap.enabled = window.innerWidth >= 768;
-    this.renderer.shadowMap.type = THREE.PCFShadowMap;
+    this.renderer.shadowMap.enabled = false;
     this.container.appendChild(this.renderer.domElement);
     this.renderer.domElement.addEventListener("webglcontextlost", this.handleContextLost);
 
@@ -148,15 +147,6 @@ export class VehicleScene {
 
     const key = new THREE.DirectionalLight(0xffffff, 2.15);
     key.position.set(5.5, 9.5, 7.5);
-    key.castShadow = true;
-    key.shadow.mapSize.set(1536, 1536);
-    key.shadow.camera.left = -8;
-    key.shadow.camera.right = 8;
-    key.shadow.camera.top = 8;
-    key.shadow.camera.bottom = -8;
-    key.shadow.bias = -0.00012;
-    key.shadow.normalBias = 0.025;
-    key.shadow.radius = 3;
     this.scene.add(key);
 
     const fill = new THREE.DirectionalLight(0xeaf2ff, 0.72);
@@ -175,6 +165,7 @@ export class VehicleScene {
     shadowCatcher.rotation.x = -Math.PI / 2;
     shadowCatcher.position.y = -0.018;
     shadowCatcher.receiveShadow = true;
+    shadowCatcher.visible = false;
     this.shadowCatcher = shadowCatcher;
     this.scene.add(shadowCatcher);
 
@@ -238,12 +229,13 @@ export class VehicleScene {
     this.loadedFrontSignIsActual = false;
     if (this.contactShadow) {
       this.contactShadow.rotation.y = 0;
+      this.contactShadow.rotation.z = 0;
       this.contactShadow.visible = true;
     }
-    if (this.shadowCatcher) this.shadowCatcher.visible = true;
+    if (this.shadowCatcher) this.shadowCatcher.visible = false;
     this.corvetteRefinementGroup = undefined;
     this.supraRefinementGroup = undefined;
-    this.disableDirectionalGroundShadow = false;
+    this.disableDirectionalGroundShadow = true;
 
     if (proceduralModel === "jeep-wrangler") {
       const rig = createJeepWranglerProcedural(accent);
@@ -313,12 +305,17 @@ export class VehicleScene {
 
     model.traverse((child) => {
       if (!(child instanceof THREE.Mesh)) return;
+      const materials = Array.isArray(child.material) ? child.material : [child.material];
+      if (materials.some((material) => material.name.toLowerCase() === "main_paint")) {
+        isToyota4RunnerModel = true;
+      }
+    });
 
-      const triangleCount = child.geometry.index
-        ? child.geometry.index.count / 3
-        : (child.geometry.getAttribute("position")?.count ?? 0) / 3;
-      child.castShadow = triangleCount > 220 && !`${child.name}`.toLowerCase().includes("glass");
-      child.receiveShadow = triangleCount > 220;
+    model.traverse((child) => {
+      if (!(child instanceof THREE.Mesh)) return;
+
+      child.castShadow = false;
+      child.receiveShadow = false;
       child.frustumCulled = true;
 
       const sourceMaterials = Array.isArray(child.material) ? child.material : [child.material];
@@ -405,6 +402,10 @@ export class VehicleScene {
             material.metalness = 0.28;
             material.roughness = 0.25;
             material.envMapIntensity = 1.02;
+            material.transparent = false;
+            material.opacity = 1;
+            material.depthWrite = true;
+            material.side = THREE.DoubleSide;
             if (material instanceof THREE.MeshPhysicalMaterial) {
               material.clearcoat = 0.78;
               material.clearcoatRoughness = 0.2;
@@ -1069,7 +1070,8 @@ export class VehicleScene {
     }
 
     if (this.contactShadow) {
-      this.contactShadow.rotation.y = this.vehicleLongitudinalAxis === "z" ? Math.PI / 2 : 0;
+      this.contactShadow.rotation.y = 0;
+      this.contactShadow.rotation.z = this.vehicleLongitudinalAxis === "z" ? Math.PI / 2 : 0;
     }
 
     const horizontalLength = Math.max(initialSize.x, initialSize.z, 0.001);

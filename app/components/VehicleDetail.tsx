@@ -99,7 +99,7 @@ export function VehicleDetail({
     ["Modelo", `${vehicle.model} ${vehicle.trim}`],
     ["Carrocería", vehicle.bodyType],
     ["Puertas", vehicle.doors],
-    ["Kilometraje", `${vehicle.mileage.toLocaleString()} km`],
+    ["Kilometraje", `${vehicle.mileage.toLocaleString(locale === "es" ? "es-PE" : "en-US")} km`],
     ["Título", vehicle.titleStatus],
     ["Color exterior", vehicle.exteriorColor],
     ["Color interior", vehicle.interiorColor],
