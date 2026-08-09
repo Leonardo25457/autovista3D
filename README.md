@@ -101,6 +101,7 @@ autovista3d/
 │   ├── models/
 │   │   ├── chevrolet-corvette/
 │   │   ├── ford-bronco/
+│   │   ├── jeep-wrangler/
 │   │   ├── tesla-model-3/
 │   │   ├── toyota-4runner/
 │   │   └── toyota-gr-supra/
@@ -369,7 +370,8 @@ y sus respectivas páginas de detalle.
 
 Las fotografías, marcas, logotipos y modelos 3D utilizados en el proyecto pueden estar sujetos a derechos, atribuciones o licencias de terceros.
 
-El Jeep Wrangler se representa mediante geometría procedural propia; el modelo GLB de terceros no forma parte del proyecto.
+El modelo 3D del Jeep Wrangler está sujeto a CC BY-NC-SA 4.0: exige atribución,
+compartir adaptaciones bajo la misma licencia y no permite uso comercial.
 
 Antes de utilizar este proyecto con fines comerciales, verifica individualmente:
 
