@@ -30,7 +30,7 @@ export function VehicleCard({ vehicle, locale }: { vehicle: Vehicle; locale: Loc
         </div>
 
         <div className="vehicle-card-meta">
-          <span><Gauge size={15} /> {vehicle.mileage.toLocaleString()} km</span>
+          <span><Gauge size={15} /> {vehicle.mileage.toLocaleString(locale === "es" ? "es-PE" : "en-US")} km</span>
           <span><MapPin size={15} /> {vehicle.bodyType}</span>
         </div>
 
