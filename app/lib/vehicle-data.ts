@@ -87,7 +87,7 @@ export const vehicles: Vehicle[] = [
       lights: true,
     },
     modelStats: {
-      fileSizeMb: 3.23,
+      fileSizeMb: 8.46,
       triangles: 177516,
       materials: 41,
       textures: 19,
@@ -133,7 +133,7 @@ export const vehicles: Vehicle[] = [
       lights: false,
     },
     modelStats: {
-      fileSizeMb: 1.53,
+      fileSizeMb: 2.8,
       triangles: 31756,
       materials: 18,
       textures: 7,
@@ -176,7 +176,7 @@ export const vehicles: Vehicle[] = [
       lights: true,
     },
     modelStats: {
-      fileSizeMb: 3.63,
+      fileSizeMb: 11.1,
       triangles: 878504,
       materials: 10,
       textures: 0,
@@ -268,7 +268,7 @@ export const vehicles: Vehicle[] = [
       commercialUseAllowed: true,
     },
     modelStats: {
-      fileSizeMb: 2.17,
+      fileSizeMb: 8.4,
       triangles: 247356,
       materials: 23,
       textures: 0,
@@ -325,7 +325,7 @@ export const vehicles: Vehicle[] = [
       commercialUseAllowed: false,
     },
     modelStats: {
-      fileSizeMb: 9.66,
+      fileSizeMb: 23.81,
       triangles: 368012,
       materials: 27,
       textures: 40,
