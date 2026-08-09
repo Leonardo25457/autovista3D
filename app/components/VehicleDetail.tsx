@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -77,14 +78,18 @@ export function VehicleDetail({
   };
 
   const fullscreenPhoto = async () => {
-    if (!photoStageRef.current) return;
+    if (!photoStageRef.current || !document.fullscreenEnabled) return;
 
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-      return;
+    try {
+      if (document.fullscreenElement) {
+        await document.exitFullscreen();
+        return;
+      }
+
+      await photoStageRef.current.requestFullscreen();
+    } catch {
+      // Fullscreen may be blocked by browser or embedding permissions.
     }
-
-    await photoStageRef.current.requestFullscreen();
   };
 
   const specs = [
@@ -127,12 +132,15 @@ export function VehicleDetail({
                 <VehicleViewer vehicle={vehicle} locale={locale} />
               ) : (
                 <>
-                  <img
+                  <Image
                     className="vehicle-main-photo"
                     src={currentPhoto}
                     alt={`${vehicle.year} ${vehicle.make} ${vehicle.model} - foto ${
                       photoIndex + 1
                     }`}
+                    fill
+                    sizes="(max-width: 1100px) calc(100vw - 24px), 68vw"
+                    preload={photoIndex === 0}
                   />
 
                   {vehicle.photos.length > 1 && (
@@ -185,9 +193,12 @@ export function VehicleDetail({
                     onClick={() => selectPhoto(index)}
                     aria-label={`Ver foto ${index + 1}`}
                   >
-                    <img
+                    <Image
                       src={item}
                       alt={`${vehicle.model} foto ${index + 1}`}
+                      width={124}
+                      height={84}
+                      sizes="124px"
                       loading={index > 4 ? "lazy" : "eager"}
                     />
                   </button>

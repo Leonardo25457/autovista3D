@@ -50,6 +50,8 @@ export const dictionary = {
     nonCommercialModel: "Este modelo no permite uso comercial.",
     verifiedRecord: "Ficha verificable por número de stock",
     verifiedVinRecord: "Ficha verificable por VIN y número de stock",
+    viewerUnavailable: "La visualización 3D no está disponible en este dispositivo.",
+    retryViewer: "Reintentar visor",
   },
   en: {
     inventory: "Inventory",
@@ -94,6 +96,8 @@ export const dictionary = {
     nonCommercialModel: "This model does not allow commercial use.",
     verifiedRecord: "Listing verifiable by stock number",
     verifiedVinRecord: "Listing verifiable by VIN and stock number",
+    viewerUnavailable: "3D viewing is unavailable on this device.",
+    retryViewer: "Retry viewer",
   },
 } as const;
 

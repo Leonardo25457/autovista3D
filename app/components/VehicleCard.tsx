@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Gauge, MapPin } from "lucide-react";
 import type { Locale } from "../lib/i18n";
 import { getUi } from "../lib/i18n";
@@ -9,7 +10,12 @@ export function VehicleCard({ vehicle, locale }: { vehicle: Vehicle; locale: Loc
   return (
     <article className="vehicle-card">
       <Link href={`/${locale}/vehicles/${vehicle.id}`} className="vehicle-card-image" scroll={true}>
-        <img src={vehicle.photos[0]} alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`} />
+        <Image
+          src={vehicle.photos[0]}
+          alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+          fill
+          sizes="(max-width: 780px) calc(100vw - 24px), (max-width: 1100px) 50vw, 33vw"
+        />
         <span className={`status-badge ${vehicle.status.toLowerCase().replace(" ", "-")}`}>{vehicle.status}</span>
         {vehicle.originalPrice && <span className="sale-badge">Oferta</span>}
       </Link>

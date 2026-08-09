@@ -77,9 +77,9 @@ export const vehicles: Vehicle[] = [
       "Ford Bronco 2021 adaptado visualmente a las fotografías compartidas: azul metálico intenso, techo negro, cristales oscurecidos, molduras y parachoques en negro/gris, estribos laterales y aros gris oscuro. El GLB suministrado corresponde a una carrocería de 2 puertas, por lo que la adaptación prioriza color, materiales e iluminación sobre la coincidencia exacta de puertas y batalla.",
     listingUrl: "https://deluxecars360.com/for-sale/2021-ford-bronco-yG10j70fh39",
     photos: [
-      "/vehicles/ford-bronco/01.png",
-      "/vehicles/ford-bronco/02.png",
-      "/vehicles/ford-bronco/03.png",
+      "/vehicles/ford-bronco/01.webp",
+      "/vehicles/ford-bronco/02.webp",
+      "/vehicles/ford-bronco/03.webp",
     ],
     model3d: "/models/ford-bronco/2021-ford-bronco.glb",
     modelFeatures: {
@@ -87,7 +87,7 @@ export const vehicles: Vehicle[] = [
       lights: true,
     },
     modelStats: {
-      fileSizeMb: 8.46,
+      fileSizeMb: 3.23,
       triangles: 177516,
       materials: 41,
       textures: 19,
@@ -120,12 +120,12 @@ export const vehicles: Vehicle[] = [
       "Toyota GR Supra adaptado a las fotografías compartidas: azul metálico profundo, techo y detalles negros, aros negros, cristales oscurecidos, difusor trasero oscuro y gran alerón posterior. El modelo A90 Final Edition suministrado conserva una silueta muy próxima al vehículo de referencia.",
     listingUrl: "https://deluxecars360.com/for-sale/2026-toyota-gr-supra-6t116mx0uf2",
     photos: [
-      "/vehicles/toyota-gr-supra/01.png",
-      "/vehicles/toyota-gr-supra/02.png",
-      "/vehicles/toyota-gr-supra/03.png",
-      "/vehicles/toyota-gr-supra/04.png",
-      "/vehicles/toyota-gr-supra/05.png",
-      "/vehicles/toyota-gr-supra/06.png",
+      "/vehicles/toyota-gr-supra/01.webp",
+      "/vehicles/toyota-gr-supra/02.webp",
+      "/vehicles/toyota-gr-supra/03.webp",
+      "/vehicles/toyota-gr-supra/04.webp",
+      "/vehicles/toyota-gr-supra/05.webp",
+      "/vehicles/toyota-gr-supra/06.webp",
     ],
     model3d: "/models/toyota-gr-supra/2026-toyota-gr-supra.glb",
     modelFeatures: {
@@ -133,7 +133,7 @@ export const vehicles: Vehicle[] = [
       lights: false,
     },
     modelStats: {
-      fileSizeMb: 2.8,
+      fileSizeMb: 1.53,
       triangles: 31756,
       materials: 18,
       textures: 7,
@@ -165,10 +165,10 @@ export const vehicles: Vehicle[] = [
     description:
       "Toyota 4Runner 4WD adaptada visualmente a las fotografías de referencia: carrocería negro grafito de alto brillo, cristales oscurecidos, molduras negras, detalles cromados, aros plateados y acabado sobrio de SUV. El GLB fue optimizado para web manteniendo la geometría original.",
     photos: [
-      "/vehicles/toyota-4runner/01.png",
-      "/vehicles/toyota-4runner/02.png",
-      "/vehicles/toyota-4runner/03.png",
-      "/vehicles/toyota-4runner/04.png",
+      "/vehicles/toyota-4runner/01.webp",
+      "/vehicles/toyota-4runner/02.webp",
+      "/vehicles/toyota-4runner/03.webp",
+      "/vehicles/toyota-4runner/04.webp",
     ],
     model3d: "/models/toyota-4runner/2019-toyota-4runner-optimized.glb",
     modelFeatures: {
@@ -176,7 +176,7 @@ export const vehicles: Vehicle[] = [
       lights: true,
     },
     modelStats: {
-      fileSizeMb: 11.1,
+      fileSizeMb: 3.63,
       triangles: 878504,
       materials: 10,
       textures: 0,
@@ -209,10 +209,10 @@ export const vehicles: Vehicle[] = [
     description:
       "Chevrolet Corvette Stingray Z51 2016 ajustado para aproximarse a la unidad real mostrada en las fotografías de referencia: rojo brillante ligeramente anaranjado, cofre visualmente levantado, alerón trasero negro, cristales más oscuros, rines negros y fascia trasera ennegrecida.",
     photos: [
-      "/vehicles/chevrolet-corvette/01.png",
-      "/vehicles/chevrolet-corvette/02.png",
-      "/vehicles/chevrolet-corvette/03.png",
-      "/vehicles/chevrolet-corvette/04.png",
+      "/vehicles/chevrolet-corvette/01.webp",
+      "/vehicles/chevrolet-corvette/02.webp",
+      "/vehicles/chevrolet-corvette/03.webp",
+      "/vehicles/chevrolet-corvette/04.webp",
     ],
     model3d: "/models/chevrolet-corvette/2016-chevrolet-corvette-c7-stingray-z51.glb",
     modelFeatures: {
@@ -252,8 +252,8 @@ export const vehicles: Vehicle[] = [
     description:
       "Tesla Model 3 2022 integrado como referencia visual a partir de las fotografías compartidas. El modelo 3D se ajustó a un acabado azul gris metálico, con cristales oscurecidos, aros plateados, molduras negras y luces configuradas para acercarse al vehículo de referencia.",
     photos: [
-      "/vehicles/tesla-model-3/01.png",
-      "/vehicles/tesla-model-3/02.png",
+      "/vehicles/tesla-model-3/01.webp",
+      "/vehicles/tesla-model-3/02.webp",
     ],
     model3d: "/models/tesla-model-3/2022-tesla-model-3.glb",
     modelFeatures: {
@@ -268,7 +268,7 @@ export const vehicles: Vehicle[] = [
       commercialUseAllowed: true,
     },
     modelStats: {
-      fileSizeMb: 8.4,
+      fileSizeMb: 2.17,
       triangles: 247356,
       materials: 23,
       textures: 0,
@@ -302,15 +302,15 @@ export const vehicles: Vehicle[] = [
       "Jeep Wrangler Unlimited Willys 2023 adaptado a las fotografías reales compartidas: pintura High Velocity de tono amarillo-lima, techo rígido negro, cristales oscurecidos, guardafangos y parachoques negros, aros oscuros, neumáticos todoterreno y distintivos WILLYS y Jeep en negro. El modelo 3D conserva el visor inferior y los controles de pintura y luces.",
     listingUrl: "https://deluxecars360.com/for-sale/2023-jeep-wrangler-JK3qp13aqp",
     photos: [
-      "/vehicles/jeep-wrangler/01.png",
-      "/vehicles/jeep-wrangler/02.png",
-      "/vehicles/jeep-wrangler/03.png",
-      "/vehicles/jeep-wrangler/04.png",
-      "/vehicles/jeep-wrangler/05.png",
-      "/vehicles/jeep-wrangler/06.png",
-      "/vehicles/jeep-wrangler/07.png",
-      "/vehicles/jeep-wrangler/08-willys-detail.png",
-      "/vehicles/jeep-wrangler/09-jeep-detail.png",
+      "/vehicles/jeep-wrangler/01.webp",
+      "/vehicles/jeep-wrangler/02.webp",
+      "/vehicles/jeep-wrangler/03.webp",
+      "/vehicles/jeep-wrangler/04.webp",
+      "/vehicles/jeep-wrangler/05.webp",
+      "/vehicles/jeep-wrangler/06.webp",
+      "/vehicles/jeep-wrangler/07.webp",
+      "/vehicles/jeep-wrangler/08-willys-detail.webp",
+      "/vehicles/jeep-wrangler/09-jeep-detail.webp",
     ],
     model3d: "/models/jeep-wrangler/2023-jeep-wrangler-rubicon-392-20th-anniversary.glb",
     modelFeatures: {
@@ -325,7 +325,7 @@ export const vehicles: Vehicle[] = [
       commercialUseAllowed: false,
     },
     modelStats: {
-      fileSizeMb: 23.81,
+      fileSizeMb: 9.66,
       triangles: 368012,
       materials: 27,
       textures: 40,

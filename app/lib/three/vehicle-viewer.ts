@@ -11,6 +11,7 @@ export type ViewerCallbacks = {
   onLoading?: (loading: boolean) => void;
   onProgress?: (progress: number | null) => void;
   onFallback?: (fallback: boolean) => void;
+  onError?: () => void;
 };
 
 export type ProceduralVehicle = "jeep-wrangler";
@@ -28,7 +29,7 @@ export class VehicleScene {
   private controls: OrbitControls;
   private loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
   private root = new THREE.Group();
-  private resizeObserver: ResizeObserver;
+  private resizeObserver?: ResizeObserver;
   private animationFrame = 0;
   private disposed = false;
   private callbacks: ViewerCallbacks;
@@ -52,6 +53,7 @@ export class VehicleScene {
   private supraRefinementGroup?: THREE.Group;
   private disableDirectionalGroundShadow = false;
   private loadGeneration = 0;
+  private contextLost = false;
 
   constructor(private container: HTMLElement, callbacks: ViewerCallbacks = {}) {
     this.callbacks = callbacks;
@@ -66,9 +68,10 @@ export class VehicleScene {
     this.renderer.setClearColor(0xf2f4f7, 1);
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.96;
-    this.renderer.shadowMap.enabled = true;
+    this.renderer.shadowMap.enabled = window.innerWidth >= 768;
     this.renderer.shadowMap.type = THREE.PCFShadowMap;
     this.container.appendChild(this.renderer.domElement);
+    this.renderer.domElement.addEventListener("webglcontextlost", this.handleContextLost);
 
     this.camera.position.copy(this.defaultCameraPosition);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
@@ -85,15 +88,46 @@ export class VehicleScene {
     this.scene.add(this.root);
     this.buildEnvironment();
 
-    this.resizeObserver = new ResizeObserver(() => this.resize());
-    this.resizeObserver.observe(this.container);
-    this.intersectionObserver = new IntersectionObserver(([entry]) => {
-      this.isVisible = entry?.isIntersecting ?? true;
-    }, { rootMargin: "180px" });
-    this.intersectionObserver.observe(this.container);
+    if (typeof ResizeObserver !== "undefined") {
+      this.resizeObserver = new ResizeObserver(() => this.resize());
+      this.resizeObserver.observe(this.container);
+    } else {
+      window.addEventListener("resize", this.resize);
+    }
+    if (typeof IntersectionObserver !== "undefined") {
+      this.intersectionObserver = new IntersectionObserver(([entry]) => {
+        this.isVisible = entry?.isIntersecting ?? true;
+        this.syncAnimation();
+      }, { rootMargin: "180px" });
+      this.intersectionObserver.observe(this.container);
+    }
+    document.addEventListener("visibilitychange", this.syncAnimation);
     this.resize();
-    this.animate();
+    this.syncAnimation();
   }
+
+  private handleContextLost = (event: Event) => {
+    event.preventDefault();
+    this.contextLost = true;
+    this.stopAnimation();
+    this.callbacks.onLoading?.(false);
+    this.callbacks.onError?.();
+  };
+
+  private stopAnimation() {
+    if (!this.animationFrame) return;
+    cancelAnimationFrame(this.animationFrame);
+    this.animationFrame = 0;
+  }
+
+  private syncAnimation = () => {
+    const shouldRender = !this.disposed && !this.contextLost && this.isVisible && !document.hidden;
+    if (!shouldRender) {
+      this.stopAnimation();
+      return;
+    }
+    if (!this.animationFrame) this.animationFrame = requestAnimationFrame(this.animate);
+  };
 
   private buildEnvironment() {
     // Fondo uniforme de estudio. Evita bandas/seams verticales visibles
@@ -1567,10 +1601,11 @@ export class VehicleScene {
   }
 
   private animate = () => {
-    if (this.disposed) return;
+    this.animationFrame = 0;
+    if (this.disposed || this.contextLost || !this.isVisible || document.hidden) return;
     this.controls.update();
     this.updateGroundVisibility();
-    if (this.isVisible) this.renderer.render(this.scene, this.camera);
+    this.renderer.render(this.scene, this.camera);
     this.animationFrame = requestAnimationFrame(this.animate);
   };
 
@@ -1605,9 +1640,12 @@ export class VehicleScene {
     this.disposed = true;
     this.loadGeneration += 1;
     this.callbacks = {};
-    cancelAnimationFrame(this.animationFrame);
-    this.resizeObserver.disconnect();
+    this.stopAnimation();
+    this.resizeObserver?.disconnect();
     this.intersectionObserver?.disconnect();
+    window.removeEventListener("resize", this.resize);
+    document.removeEventListener("visibilitychange", this.syncAnimation);
+    this.renderer.domElement.removeEventListener("webglcontextlost", this.handleContextLost);
     this.controls.dispose();
     this.clearRoot();
     if (this.contactShadow) this.disposeObjectResources(this.contactShadow);
