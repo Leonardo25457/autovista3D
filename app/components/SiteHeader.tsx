@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { CarFront, Languages, Menu, Phone, X } from "lucide-react";
 import { useState } from "react";
+import { salesContact } from "../lib/contact";
 import { getUi, type Locale } from "../lib/i18n";
 
 export function SiteHeader({ locale }: { locale: Locale }) {
@@ -29,9 +30,11 @@ export function SiteHeader({ locale }: { locale: Locale }) {
           <Link className="language-link" href={`/${otherLocale}/vehicles`}>
             <Languages size={17} /> {otherLocale.toUpperCase()}
           </Link>
-          <a className="call-button" href="tel:+51999999999">
-            <Phone size={17} /> {ui.callNow}
-          </a>
+          {salesContact.phoneHref && (
+            <a className="call-button" href={salesContact.phoneHref}>
+              <Phone size={17} /> {ui.callNow}
+            </a>
+          )}
           <button className="menu-button" type="button" onClick={() => setOpen(!open)} aria-label="Menu">
             {open ? <X /> : <Menu />}
           </button>

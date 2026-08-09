@@ -17,7 +17,7 @@ export function VehicleInventory({ locale }: { locale: Locale }) {
   const filtered = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     const result = vehicles.filter((vehicle) => {
-      const text = `${vehicle.year} ${vehicle.make} ${vehicle.model} ${vehicle.trim} ${vehicle.vin} ${vehicle.stock}`.toLowerCase();
+      const text = `${vehicle.year} ${vehicle.make} ${vehicle.model} ${vehicle.trim} ${vehicle.vin ?? ""} ${vehicle.stock}`.toLowerCase();
       const queryMatch = !normalized || text.includes(normalized);
       const priceMatch = price === "all" ||
         (price === "under15" && vehicle.price < 15000) ||

@@ -5,7 +5,7 @@ export type VehicleBody = "SUV" | "Pickup" | "Sedan" | "Coupe";
 export type Vehicle = {
   id: string;
   stock: string;
-  vin: string;
+  vin?: string;
   year: number;
   make: string;
   model: string;
@@ -55,7 +55,6 @@ export const vehicles: Vehicle[] = [
   {
     id: "2021-ford-bronco-4-door-4x4",
     stock: "BR-2021",
-    vin: "PENDIENTE-DELUXE",
     year: 2021,
     make: "Ford",
     model: "Bronco",
@@ -99,7 +98,6 @@ export const vehicles: Vehicle[] = [
   {
     id: "2026-toyota-gr-supra",
     stock: "SUPRA-2026",
-    vin: "PENDIENTE-DELUXE",
     year: 2026,
     make: "Toyota",
     model: "GR Supra",
@@ -146,7 +144,6 @@ export const vehicles: Vehicle[] = [
   {
     id: "2019-toyota-4runner-4wd",
     stock: "4R-2019",
-    vin: "PENDIENTE-REFERENCIA",
     year: 2019,
     make: "Toyota",
     model: "4Runner",
@@ -234,7 +231,6 @@ export const vehicles: Vehicle[] = [
   {
     id: "2022-tesla-model-3-dual-motor",
     stock: "TM3-2022",
-    vin: "PENDIENTE-REFERENCIA",
     year: 2022,
     make: "Tesla",
     model: "Model 3",
@@ -316,23 +312,10 @@ export const vehicles: Vehicle[] = [
       "/vehicles/jeep-wrangler/08-willys-detail.png",
       "/vehicles/jeep-wrangler/09-jeep-detail.png",
     ],
-    model3d: "/models/jeep-wrangler/2023-jeep-wrangler-willys-custom.glb",
+    proceduralModel: "jeep-wrangler",
     modelFeatures: {
       paintCustomization: true,
       lights: true,
-    },
-    modelAttribution: {
-      creator: "Ddiaz Design",
-      sourceUrl: "https://sketchfab.com/3d-models/2023-jeep-wrangler-rubicon-392-20th-anniversary-7247a74596224c3dadc219836430279c",
-      license: "CC BY-NC-SA 4.0",
-      licenseUrl: "https://creativecommons.org/licenses/by-nc-sa/4.0/",
-      commercialUseAllowed: false,
-    },
-    modelStats: {
-      fileSizeMb: 10.8,
-      triangles: 368012,
-      materials: 27,
-      textures: 40,
     },
     accent: "#d6df3b",
     createdAt: "2026-08-07",

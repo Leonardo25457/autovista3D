@@ -12,8 +12,10 @@ import {
   MessageCircle,
   Phone,
   ShieldCheck,
+  ExternalLink,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
+import { salesContact } from "../lib/contact";
 import { getUi, type Locale } from "../lib/i18n";
 import { formatPrice, type Vehicle } from "../lib/vehicle-data";
 import { SiteHeader } from "./SiteHeader";
@@ -86,7 +88,7 @@ export function VehicleDetail({
   };
 
   const specs = [
-    ["VIN", vehicle.vin],
+    ["VIN", vehicle.vin ?? ui.unavailable],
     ["Año", vehicle.year],
     ["Marca", vehicle.make],
     ["Modelo", `${vehicle.model} ${vehicle.trim}`],
@@ -202,6 +204,23 @@ export function VehicleDetail({
                 <small>Interactivo</small>
               </button>
             </div>
+
+            {vehicle.modelAttribution && (
+              <div className="model-attribution">
+                <div>
+                  <span>{ui.modelBy} <strong>{vehicle.modelAttribution.creator}</strong>.</span>
+                  <a href={vehicle.modelAttribution.sourceUrl} target="_blank" rel="noreferrer">
+                    {ui.modelSource} <ExternalLink size={12} />
+                  </a>
+                  <a href={vehicle.modelAttribution.licenseUrl} target="_blank" rel="noreferrer">
+                    {vehicle.modelAttribution.license} <ExternalLink size={12} />
+                  </a>
+                </div>
+                {!vehicle.modelAttribution.commercialUseAllowed && (
+                  <strong>{ui.nonCommercialModel}</strong>
+                )}
+              </div>
+            )}
           </div>
 
           <aside className="purchase-card">
@@ -237,24 +256,28 @@ export function VehicleDetail({
               {ui.inquire}
             </a>
 
-            <a
-              className="action action-green"
-              href="https://wa.me/51999999999"
-              target="_blank"
-              rel="noreferrer"
-            >
-              <MessageCircle size={20} />
-              {ui.whatsapp}
-            </a>
+            {salesContact.whatsappHref && (
+              <a
+                className="action action-green"
+                href={salesContact.whatsappHref}
+                target="_blank"
+                rel="noreferrer"
+              >
+                <MessageCircle size={20} />
+                {ui.whatsapp}
+              </a>
+            )}
 
-            <a className="action action-dark" href="tel:+51999999999">
-              <Phone size={20} />
-              {ui.reserve}
-            </a>
+            {salesContact.phoneHref && (
+              <a className="action action-dark" href={salesContact.phoneHref}>
+                <Phone size={20} />
+                {ui.reserve}
+              </a>
+            )}
 
             <div className="trust-row">
               <ShieldCheck size={18} />
-              <span>Ficha verificable por VIN y número de stock</span>
+              <span>{vehicle.vin ? ui.verifiedVinRecord : ui.verifiedRecord}</span>
             </div>
           </aside>
         </section>
@@ -302,10 +325,12 @@ export function VehicleDetail({
               <MapPin size={18} />
               <strong>{vehicle.location}</strong>
             </div>
-            <a href="tel:+51999999999">
-              <Phone size={18} />
-              +51 999 999 999
-            </a>
+            {salesContact.phoneHref && (
+              <a href={salesContact.phoneHref}>
+                <Phone size={18} />
+                {salesContact.phone}
+              </a>
+            )}
           </aside>
         </section>
       </main>

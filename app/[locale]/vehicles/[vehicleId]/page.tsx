@@ -8,19 +8,5 @@ export default async function VehiclePage({ params }: { params: Promise<{ locale
   if (!isLocale(locale)) notFound();
   const vehicle = vehicleById[vehicleId];
   if (!vehicle) notFound();
-  return (
-    <>
-      {vehicle.model3d && (
-        <link
-          rel="preload"
-          href={vehicle.model3d}
-          as="fetch"
-          type="model/gltf-binary"
-          crossOrigin="anonymous"
-          fetchPriority="high"
-        />
-      )}
-      <VehicleDetail vehicle={vehicle} locale={locale} />
-    </>
-  );
+  return <VehicleDetail vehicle={vehicle} locale={locale} />;
 }
