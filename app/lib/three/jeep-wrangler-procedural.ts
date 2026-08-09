@@ -14,6 +14,7 @@ type JeepMaterials = {
   blackPlastic: THREE.MeshStandardMaterial;
   roof: THREE.MeshStandardMaterial;
   glass: THREE.MeshPhysicalMaterial;
+  windshieldGlass: THREE.MeshPhysicalMaterial;
   chrome: THREE.MeshStandardMaterial;
   rim: THREE.MeshStandardMaterial;
   tire: THREE.MeshStandardMaterial;
@@ -60,21 +61,21 @@ function createMaterials(accent: string): JeepMaterials {
   const paint = new THREE.MeshPhysicalMaterial({
     name: "BodyPaint",
     color: bodyColor,
-    metalness: 0.68,
-    roughness: 0.2,
+    metalness: 0.08,
+    roughness: 0.28,
     clearcoat: 1,
     clearcoatRoughness: 0.085,
-    envMapIntensity: 1.45,
+    envMapIntensity: 1.15,
   });
 
   const paintDark = new THREE.MeshPhysicalMaterial({
     name: "BodyPaintDark",
     color: darker,
-    metalness: 0.62,
-    roughness: 0.24,
+    metalness: 0.08,
+    roughness: 0.31,
     clearcoat: 0.92,
     clearcoatRoughness: 0.12,
-    envMapIntensity: 1.35,
+    envMapIntensity: 1.1,
   });
 
   return {
@@ -83,30 +84,44 @@ function createMaterials(accent: string): JeepMaterials {
     blackPlastic: new THREE.MeshStandardMaterial({
       name: "BlackPlastic",
       color: 0x111418,
-      roughness: 0.54,
-      metalness: 0.08,
+      roughness: 0.72,
+      metalness: 0,
       envMapIntensity: 0.65,
     }),
     roof: new THREE.MeshStandardMaterial({
       name: "HardTop",
       color: 0x171a1e,
-      roughness: 0.38,
-      metalness: 0.12,
+      roughness: 0.67,
+      metalness: 0,
       envMapIntensity: 0.85,
     }),
     glass: new THREE.MeshPhysicalMaterial({
       name: "AutomotiveGlass",
-      color: 0x91b5c7,
+      color: 0x10161b,
       metalness: 0,
-      roughness: 0.075,
-      transmission: 0.72,
+      roughness: 0.12,
+      transmission: 0.08,
       thickness: 0.035,
       ior: 1.45,
       transparent: true,
-      opacity: 0.46,
+      opacity: 0.88,
       side: THREE.DoubleSide,
       depthWrite: false,
       envMapIntensity: 1.2,
+    }),
+    windshieldGlass: new THREE.MeshPhysicalMaterial({
+      name: "WindshieldGlass",
+      color: 0x58707a,
+      metalness: 0,
+      roughness: 0.08,
+      transmission: 0.42,
+      thickness: 0.025,
+      ior: 1.45,
+      transparent: true,
+      opacity: 0.64,
+      side: THREE.DoubleSide,
+      depthWrite: false,
+      envMapIntensity: 1.15,
     }),
     chrome: new THREE.MeshStandardMaterial({
       name: "Chrome",
@@ -117,10 +132,10 @@ function createMaterials(accent: string): JeepMaterials {
     }),
     rim: new THREE.MeshStandardMaterial({
       name: "AlloyWheel",
-      color: 0x8a929b,
-      roughness: 0.23,
-      metalness: 0.9,
-      envMapIntensity: 1.25,
+      color: 0x252a2e,
+      roughness: 0.38,
+      metalness: 0.68,
+      envMapIntensity: 0.9,
     }),
     tire: new THREE.MeshStandardMaterial({
       name: "TireRubber",
@@ -251,8 +266,8 @@ function createMainBody(materials: JeepMaterials) {
   hood.rotation.z = -0.025;
   body.add(hood);
 
-  const hoodBulge = roundedBox("HoodPowerDome", 0.98, 0.09, 0.84, 0.055, materials.paintDark);
-  hoodBulge.position.set(1.52, 1.585, 0);
+  const hoodBulge = roundedBox("HoodPowerDome", 1.18, 0.035, 1.42, 0.018, materials.paint);
+  hoodBulge.position.set(1.55, 1.57, 0);
   hoodBulge.rotation.z = -0.025;
   body.add(hoodBulge);
 
@@ -266,7 +281,7 @@ function createMainBody(materials: JeepMaterials) {
   rearGate.position.set(-2.57, 1.03, 0);
   body.add(rearGate);
 
-  const fuelDoor = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.018, 32), materials.paintDark);
+  const fuelDoor = new THREE.Mesh(new THREE.CylinderGeometry(0.14, 0.14, 0.018, 32), materials.blackPlastic);
   fuelDoor.name = "FuelDoor";
   fuelDoor.rotation.x = Math.PI / 2;
   fuelDoor.position.set(-1.95, 1.15, 0.993);
@@ -321,15 +336,23 @@ function createCabin(materials: JeepMaterials) {
   roofCenterLine.position.set(-0.23, 2.49, 0);
   cabin.add(roofCenterLine);
 
-  const windshieldFrame = roundedBox("WindshieldFrame", 0.13, 0.96, 2.03, 0.055, materials.roof);
-  windshieldFrame.position.set(0.9, 1.97, 0);
-  windshieldFrame.rotation.z = 0.235;
-  cabin.add(windshieldFrame);
-
-  const windshield = roundedBox("WindshieldGlass", 0.045, 0.77, 1.78, 0.022, materials.glass);
+  const windshield = roundedBox("WindshieldGlass", 0.045, 0.77, 1.78, 0.022, materials.windshieldGlass);
   windshield.position.set(0.89, 1.98, 0);
   windshield.rotation.z = 0.235;
   cabin.add(windshield);
+
+  for (const z of [-0.96, 0.96]) {
+    const pillar = roundedBox("WindshieldPillar", 0.08, 0.94, 0.09, 0.025, materials.paint);
+    pillar.position.set(0.9, 1.97, z);
+    pillar.rotation.z = 0.235;
+    cabin.add(pillar);
+  }
+  for (const y of [1.58, 2.37]) {
+    const rail = roundedBox("WindshieldRail", 0.08, 0.08, 1.92, 0.025, materials.paint);
+    rail.position.set(y < 2 ? 1 : 0.81, y, 0);
+    rail.rotation.z = 0.235;
+    cabin.add(rail);
+  }
 
   const rearFrame = roundedBox("RearWindowFrame", 0.13, 0.88, 2.02, 0.055, materials.roof);
   rearFrame.position.set(-1.74, 1.98, 0);
@@ -351,14 +374,6 @@ function createCabin(materials: JeepMaterials) {
     const frameZ = side.z - outward * 0.008;
     const glassZ = side.z + outward * 0.018;
 
-    const frontFrame = createSidePanel(
-      `FrontWindowFrame_${side.suffix}`,
-      [[0.72, 1.56], [0.53, 2.29], [-0.19, 2.29], [-0.2, 1.56]],
-      frameZ,
-      0.055,
-      materials.roof,
-    );
-    cabin.add(frontFrame);
     const frontGlass = createSidePanel(
       `FrontWindowGlass_${side.suffix}`,
       [[0.64, 1.64], [0.47, 2.21], [-0.12, 2.21], [-0.13, 1.64]],
@@ -368,14 +383,6 @@ function createCabin(materials: JeepMaterials) {
     );
     cabin.add(frontGlass);
 
-    const rearFrameSide = createSidePanel(
-      `RearWindowFrame_${side.suffix}`,
-      [[-0.22, 1.56], [-0.2, 2.29], [-1.02, 2.29], [-1.04, 1.56]],
-      frameZ,
-      0.055,
-      materials.roof,
-    );
-    cabin.add(rearFrameSide);
     const rearGlassSide = createSidePanel(
       `RearWindowGlass_${side.suffix}`,
       [[-0.15, 1.64], [-0.14, 2.21], [-0.95, 2.21], [-0.97, 1.64]],
@@ -385,14 +392,6 @@ function createCabin(materials: JeepMaterials) {
     );
     cabin.add(rearGlassSide);
 
-    const quarterFrame = createSidePanel(
-      `QuarterWindowFrame_${side.suffix}`,
-      [[-1.07, 1.56], [-1.05, 2.29], [-1.6, 2.29], [-1.72, 1.62]],
-      frameZ,
-      0.055,
-      materials.roof,
-    );
-    cabin.add(quarterFrame);
     const quarterGlass = createSidePanel(
       `QuarterWindowGlass_${side.suffix}`,
       [[-1.12, 1.64], [-1.11, 2.21], [-1.53, 2.21], [-1.63, 1.68]],
@@ -401,6 +400,25 @@ function createCabin(materials: JeepMaterials) {
       materials.glass,
     );
     cabin.add(quarterGlass);
+
+    const pillars = [
+      { x: 0.67, height: 0.79, material: materials.paint },
+      { x: -0.2, height: 0.76, material: materials.paint },
+      { x: -1.05, height: 0.76, material: materials.roof },
+      { x: -1.64, height: 0.7, material: materials.roof },
+    ];
+    pillars.forEach(({ x, height, material }, index) => {
+      const pillar = roundedBox(`CabinPillar_${side.suffix}_${index}`, 0.075, height, 0.075, 0.018, material);
+      pillar.position.set(x, 1.93, frameZ);
+      cabin.add(pillar);
+    });
+
+    const lowerWindowRail = roundedBox(`LowerWindowRail_${side.suffix}`, 2.34, 0.08, 0.075, 0.02, materials.paint);
+    lowerWindowRail.position.set(-0.45, 1.58, frameZ);
+    cabin.add(lowerWindowRail);
+    const upperWindowRail = roundedBox(`UpperWindowRail_${side.suffix}`, 2.34, 0.08, 0.075, 0.02, materials.roof);
+    upperWindowRail.position.set(-0.45, 2.29, frameZ);
+    cabin.add(upperWindowRail);
 
     const frontDoor = createSidePanel(
       `FrontDoor_${side.suffix}`,
@@ -428,7 +446,7 @@ function createCabin(materials: JeepMaterials) {
 
     for (const x of [0.64, -0.29]) {
       for (const y of [1.08, 1.38]) {
-        const hinge = roundedBox(`DoorHinge_${side.suffix}`, 0.095, 0.08, 0.075, 0.018, materials.blackPlastic);
+        const hinge = roundedBox(`DoorHinge_${side.suffix}`, 0.095, 0.08, 0.075, 0.018, materials.paint);
         hinge.position.set(x, y, side.z + outward * 0.075);
         cabin.add(hinge);
       }
@@ -464,7 +482,7 @@ function createWheel(materials: JeepMaterials, outward: 1 | -1) {
   const wheel = new THREE.Group();
   wheel.name = outward > 0 ? "WheelLeft" : "WheelRight";
 
-  const tireCore = new THREE.Mesh(new THREE.TorusGeometry(0.425, 0.155, 18, 56), materials.tire);
+  const tireCore = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.16, 18, 56), materials.tire);
   tireCore.name = "Tire";
   tireCore.castShadow = true;
   tireCore.receiveShadow = true;
@@ -476,12 +494,12 @@ function createWheel(materials: JeepMaterials, outward: 1 | -1) {
   sideWall.castShadow = true;
   wheel.add(sideWall);
 
-  const treadGeometry = new RoundedBoxGeometry(0.13, 0.075, 0.31, 3, 0.018);
-  for (let index = 0; index < 24; index += 1) {
-    const angle = (index / 24) * Math.PI * 2;
+  const treadGeometry = new RoundedBoxGeometry(0.095, 0.045, 0.27, 2, 0.012);
+  for (let index = 0; index < 32; index += 1) {
+    const angle = (index / 32) * Math.PI * 2;
     const tread = new THREE.Mesh(treadGeometry, materials.tire);
     tread.name = "Tread";
-    tread.position.set(Math.cos(angle) * 0.56, Math.sin(angle) * 0.56, 0);
+    tread.position.set(Math.cos(angle) * 0.555, Math.sin(angle) * 0.555, 0);
     tread.rotation.z = angle;
     tread.rotation.y = index % 2 === 0 ? 0.11 : -0.11;
     tread.castShadow = true;
@@ -495,7 +513,7 @@ function createWheel(materials: JeepMaterials, outward: 1 | -1) {
   brakeDisc.position.z = outward * 0.115;
   wheel.add(brakeDisc);
 
-  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.095, 0.12, 32), materials.chrome);
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(0.095, 0.095, 0.12, 32), materials.rim);
   hub.name = "WheelHub";
   hub.rotation.x = Math.PI / 2;
   hub.position.z = outward * 0.17;
@@ -506,9 +524,9 @@ function createWheel(materials: JeepMaterials, outward: 1 | -1) {
   rimRing.position.z = outward * 0.175;
   wheel.add(rimRing);
 
-  const spokeGeometry = new RoundedBoxGeometry(0.075, 0.29, 0.055, 3, 0.018);
-  for (let index = 0; index < 5; index += 1) {
-    const angle = (index / 5) * Math.PI * 2;
+  const spokeGeometry = new RoundedBoxGeometry(0.038, 0.25, 0.045, 2, 0.012);
+  for (let index = 0; index < 10; index += 1) {
+    const angle = (index / 10) * Math.PI * 2;
     const spoke = new THREE.Mesh(spokeGeometry, materials.rim);
     spoke.name = "RimSpoke";
     spoke.position.set(Math.cos(angle) * 0.115, Math.sin(angle) * 0.115, outward * 0.18);
@@ -517,7 +535,7 @@ function createWheel(materials: JeepMaterials, outward: 1 | -1) {
     wheel.add(spoke);
   }
 
-  const caliper = roundedBox("BrakeCaliper", 0.12, 0.2, 0.06, 0.025, materials.amber);
+  const caliper = roundedBox("BrakeCaliper", 0.1, 0.16, 0.05, 0.02, materials.brake);
   caliper.position.set(-0.21, 0.03, outward * 0.13);
   wheel.add(caliper);
 
@@ -531,18 +549,16 @@ function createFenderFlares(materials: JeepMaterials) {
   const wheelCenters = [-1.67, 1.64];
   for (const centerX of wheelCenters) {
     for (const z of [-1.045, 1.045]) {
-      const points: THREE.Vector3[] = [];
-      for (let index = 0; index <= 22; index += 1) {
-        const angle = Math.PI - (index / 22) * Math.PI;
-        points.push(new THREE.Vector3(
-          centerX + Math.cos(angle) * 0.73,
-          0.59 + Math.sin(angle) * 0.73,
-          z,
-        ));
+      const points: Array<[number, number]> = [];
+      for (let index = 0; index <= 24; index += 1) {
+        const angle = Math.PI - (index / 24) * Math.PI;
+        points.push([centerX + Math.cos(angle) * 0.78, 0.59 + Math.sin(angle) * 0.78]);
       }
-      const path = new THREE.CatmullRomCurve3(points);
-      const geometry = new THREE.TubeGeometry(path, 48, 0.065, 8, false);
-      const flare = new THREE.Mesh(geometry, materials.blackPlastic);
+      for (let index = 24; index >= 0; index -= 1) {
+        const angle = Math.PI - (index / 24) * Math.PI;
+        points.push([centerX + Math.cos(angle) * 0.64, 0.59 + Math.sin(angle) * 0.64]);
+      }
+      const flare = createSidePanel("WheelArchFlare", points, z, 0.15, materials.blackPlastic);
       flare.name = "WheelArchFlare";
       flare.castShadow = true;
       flares.add(flare);
@@ -563,7 +579,7 @@ function createFront(materials: JeepMaterials, headlights: THREE.MeshStandardMat
   const front = new THREE.Group();
   front.name = "FrontEnd";
 
-  const grilleFrame = roundedBox("SevenSlotGrille", 0.16, 0.72, 1.69, 0.075, materials.paintDark);
+  const grilleFrame = roundedBox("SevenSlotGrille", 0.16, 0.72, 1.69, 0.075, materials.blackPlastic);
   grilleFrame.position.set(2.57, 1.13, 0);
   front.add(grilleFrame);
 
@@ -596,13 +612,16 @@ function createFront(materials: JeepMaterials, headlights: THREE.MeshStandardMat
     lens.position.set(2.782, 1.16, z);
     front.add(lens);
 
-    const turn = roundedBox("FrontTurnSignal", 0.09, 0.15, 0.27, 0.06, materials.amber);
+    const turn = roundedBox("FrontTurnSignal", 0.09, 0.13, 0.31, 0.045, materials.white);
     turn.position.set(2.66, 1.44, z > 0 ? 0.91 : -0.91);
     front.add(turn);
+    const amberMarker = roundedBox("FrontAmberMarker", 0.095, 0.13, 0.08, 0.025, materials.amber);
+    amberMarker.position.set(2.67, 1.44, z > 0 ? 1.04 : -1.04);
+    front.add(amberMarker);
   }
 
-  const bumper = roundedBox("FrontBumper", 0.36, 0.25, 2.15, 0.08, materials.blackPlastic);
-  bumper.position.set(2.8, 0.56, 0);
+  const bumper = roundedBox("FrontBumper", 0.28, 0.25, 2.15, 0.08, materials.blackPlastic);
+  bumper.position.set(2.72, 0.56, 0);
   front.add(bumper);
 
   for (const z of [-0.91, 0.91]) {
@@ -627,7 +646,7 @@ function createFront(materials: JeepMaterials, headlights: THREE.MeshStandardMat
   front.add(skid);
 
   for (const z of [-0.43, 0.43]) {
-    const hook = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.027, 10, 28, Math.PI * 1.55), materials.amber);
+    const hook = new THREE.Mesh(new THREE.TorusGeometry(0.09, 0.027, 10, 28, Math.PI * 1.55), materials.blackPlastic);
     hook.name = "TowHook";
     hook.position.set(2.99, 0.48, z);
     hook.rotation.y = Math.PI / 2;
@@ -810,8 +829,15 @@ function createSideDetails(materials: JeepMaterials) {
   details.name = "SideDetails";
 
   for (const z of [-1.12, 1.12]) {
-    const step = roundedBox("SideStep", 2.7, 0.12, 0.16, 0.05, materials.blackPlastic);
-    step.position.set(-0.18, 0.48, z);
+    const outward = Math.sign(z);
+    const stepPath = new THREE.CatmullRomCurve3([
+      new THREE.Vector3(-1.24, 0.5, z - outward * 0.08),
+      new THREE.Vector3(-1.08, 0.42, z),
+      new THREE.Vector3(0.72, 0.42, z),
+      new THREE.Vector3(0.88, 0.5, z - outward * 0.08),
+    ]);
+    const step = new THREE.Mesh(new THREE.TubeGeometry(stepPath, 32, 0.045, 10, false), materials.blackPlastic);
+    step.name = "TubularSideStep";
     details.add(step);
 
     for (const x of [-0.85, 0, 0.72]) {
@@ -824,6 +850,36 @@ function createSideDetails(materials: JeepMaterials) {
     const beltLine = roundedBox("BeltLineTrim", 3.24, 0.035, 0.04, 0.015, materials.blackPlastic);
     beltLine.position.set(-0.45, 1.54, z > 0 ? 1.045 : -1.045);
     details.add(beltLine);
+
+    const createBadge = (text: string, width: number, height: number) => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 512;
+      canvas.height = 128;
+      const context = canvas.getContext("2d");
+      if (context) {
+        context.clearRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = "#111317";
+        context.font = "900 italic 78px Arial";
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+        context.fillText(text, canvas.width / 2, canvas.height / 2);
+      }
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      const badge = new THREE.Mesh(
+        new THREE.PlaneGeometry(width, height),
+        new THREE.MeshBasicMaterial({ map: texture, transparent: true, depthWrite: false }),
+      );
+      badge.rotation.y = z < 0 ? Math.PI : 0;
+      return badge;
+    };
+
+    const willys = createBadge("WILLYS", 0.62, 0.16);
+    willys.position.set(1.52, 1.52, z + outward * 0.052);
+    details.add(willys);
+    const jeepBadge = createBadge("Jeep", 0.34, 0.13);
+    jeepBadge.position.set(0.78, 1.03, z + outward * 0.052);
+    details.add(jeepBadge);
   }
 
   return details;
@@ -832,7 +888,7 @@ function createSideDetails(materials: JeepMaterials) {
 export function createJeepWranglerProcedural(accent: string): JeepWranglerRig {
   const materials = createMaterials(accent);
   const jeep = new THREE.Group();
-  jeep.name = "JeepWranglerSaharaProcedural";
+  jeep.name = "JeepWranglerWillysProcedural";
   jeep.rotation.y = -0.04;
 
   const headlightMaterials: THREE.MeshStandardMaterial[] = [];
@@ -860,7 +916,7 @@ export function createJeepWranglerProcedural(accent: string): JeepWranglerRig {
   for (const wheelData of wheelPositions) {
     const wheel = (wheelData.outward > 0 ? leftWheelTemplate : rightWheelTemplate).clone(true);
     wheel.name = wheelData.name;
-    wheel.position.set(wheelData.x, 0.59, wheelData.z);
+    wheel.position.set(wheelData.x, 0.62, wheelData.z);
     jeep.add(wheel);
   }
 
