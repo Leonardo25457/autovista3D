@@ -212,15 +212,15 @@ Ejemplo:
 
 ```text
 public/vehicles/jeep-wrangler/
-├── 01.png
-├── 02.png
-├── 03.png
-├── 04.png
-├── 05.png
-├── 06.png
-├── 07.png
-├── 08-willys-detail.png
-└── 09-jeep-detail.png
+├── 01.webp
+├── 02.webp
+├── 03.webp
+├── 04.webp
+├── 05.webp
+├── 06.webp
+├── 07.webp
+├── 08-willys-detail.webp
+└── 09-jeep-detail.webp
 ```
 
 La página de detalle combina la galería fotográfica y el visor 3D dentro de una misma experiencia multimedia.
@@ -292,8 +292,8 @@ Ejemplo simplificado:
   model: "Modelo",
   trim: "Versión",
   photos: [
-    "/vehicles/nuevo-vehiculo/01.png",
-    "/vehicles/nuevo-vehiculo/02.png"
+    "/vehicles/nuevo-vehiculo/01.webp",
+    "/vehicles/nuevo-vehiculo/02.webp"
   ],
   model3d: "/models/nuevo-vehiculo/model.glb",
   modelFeatures: {

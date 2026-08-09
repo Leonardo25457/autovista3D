@@ -1,6 +1,7 @@
 "use client";
 
-import { Expand, Lightbulb, LoaderCircle, Minus, Palette, Plus, RotateCcw, View } from "lucide-react";
+import Image from "next/image";
+import { AlertTriangle, Expand, Lightbulb, LoaderCircle, Minus, Palette, Plus, RefreshCcw, RotateCcw, View } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import type { Locale } from "../lib/i18n";
 import { getUi } from "../lib/i18n";
@@ -73,34 +74,54 @@ export function VehicleViewer({ vehicle, locale }: { vehicle: Vehicle; locale: L
   const [lightsOn, setLightsOn] = useState(true);
   const [paintOpen, setPaintOpen] = useState(false);
   const [paintColor, setPaintColor] = useState(vehicle.accent);
+  const [error, setError] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
 
   useEffect(() => {
     let cancelled = false;
     let scene: VehicleScene | null = null;
     setPaintColor(vehicle.accent);
+    setError(false);
+    setLoading(true);
+    setProgress(0);
+
+    const fail = () => {
+      if (cancelled) return;
+      setLoading(false);
+      setError(true);
+    };
 
     void import("../lib/three/vehicle-viewer").then(({ VehicleScene: Scene }) => {
       if (cancelled || !mountRef.current) return;
-      scene = new Scene(mountRef.current, {
-        onLoading: (value) => { if (!cancelled) setLoading(value); },
-        onProgress: (value) => { if (!cancelled) setProgress(value); },
-        onFallback: (value) => { if (!cancelled) setFallback(value); },
-      });
-      sceneRef.current = scene;
-      void scene.setVehicle(vehicle.model3d, vehicle.accent, vehicle.proceduralModel);
-    });
+      try {
+        scene = new Scene(mountRef.current, {
+          onLoading: (value) => { if (!cancelled) setLoading(value); },
+          onProgress: (value) => { if (!cancelled) setProgress(value); },
+          onFallback: (value) => { if (!cancelled) setFallback(value); },
+          onError: fail,
+        });
+        sceneRef.current = scene;
+        void scene.setVehicle(vehicle.model3d, vehicle.accent, vehicle.proceduralModel).catch(fail);
+      } catch {
+        fail();
+      }
+    }).catch(fail);
 
     return () => {
       cancelled = true;
       sceneRef.current = null;
       scene?.dispose();
     };
-  }, [vehicle.accent, vehicle.model3d, vehicle.proceduralModel]);
+  }, [retryKey, vehicle.accent, vehicle.model3d, vehicle.proceduralModel]);
 
   const fullscreen = async () => {
-    if (!mountRef.current) return;
-    if (document.fullscreenElement) await document.exitFullscreen();
-    else await mountRef.current.parentElement?.requestFullscreen();
+    if (!mountRef.current || !document.fullscreenEnabled) return;
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await mountRef.current.parentElement?.requestFullscreen();
+    } catch {
+      // Fullscreen may be blocked by browser or embedding permissions.
+    }
   };
 
   const changePaint = (color: string) => {
@@ -126,7 +147,25 @@ export function VehicleViewer({ vehicle, locale }: { vehicle: Vehicle; locale: L
     <section className="vehicle-viewer-shell">
       <div ref={mountRef} className="vehicle-three-mount" />
 
-      {loading && (
+      {error && (
+        <div className="viewer-error">
+          <Image
+            src={vehicle.photos[0]}
+            alt={`${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+            fill
+            sizes="(max-width: 1100px) calc(100vw - 24px), 68vw"
+          />
+          <div>
+            <AlertTriangle size={24} />
+            <strong>{ui.viewerUnavailable}</strong>
+            <button type="button" onClick={() => setRetryKey((value) => value + 1)}>
+              <RefreshCcw size={16} /> {ui.retryViewer}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {!error && loading && (
         <div className="vehicle-loader">
           <div className="vehicle-loader-card">
             <LoaderCircle size={28} />
@@ -139,7 +178,7 @@ export function VehicleViewer({ vehicle, locale }: { vehicle: Vehicle; locale: L
         </div>
       )}
 
-      <div className="viewer-toolbar">
+      {!error && <div className="viewer-toolbar">
         <button className={autoRotate ? "active" : ""} type="button" onClick={() => {
           const next = !autoRotate;
           setAutoRotate(next);
@@ -171,9 +210,9 @@ export function VehicleViewer({ vehicle, locale }: { vehicle: Vehicle; locale: L
           </button>
         )}
         <button type="button" onClick={fullscreen} title={ui.fullscreen}><Expand size={18} /></button>
-      </div>
+      </div>}
 
-      {supportsPaint && paintOpen && (
+      {!error && supportsPaint && paintOpen && (
         <div className="paint-picker" aria-label="Colores de carrocería">
           <strong>Color de carrocería</strong>
           <div style={{ gridTemplateColumns: `repeat(${Math.min(paintOptions.length, 4)}, 1fr)` }}>
@@ -193,15 +232,15 @@ export function VehicleViewer({ vehicle, locale }: { vehicle: Vehicle; locale: L
         </div>
       )}
 
-      <div className="view-presets">
+      {!error && <div className="view-presets">
         <button type="button" onClick={() => sceneRef.current?.setView("front")}>{ui.front}</button>
         <button type="button" onClick={() => sceneRef.current?.setView("side")}>{ui.side}</button>
         <button type="button" onClick={() => sceneRef.current?.setView("rear")}>{ui.rear}</button>
         <button type="button" onClick={() => sceneRef.current?.setView("bottom")}>{ui.bottom}</button>
-      </div>
+      </div>}
 
-      <div className="viewer-help">Arrastra para rotar · rueda para acercar · doble clic para centrar</div>
-      {fallback && <div className="fallback-note">{ui.modelUnavailable}</div>}
+      {!error && <div className="viewer-help">Arrastra para rotar · rueda para acercar · doble clic para centrar</div>}
+      {!error && fallback && <div className="fallback-note">{ui.modelUnavailable}</div>}
     </section>
   );
 }
