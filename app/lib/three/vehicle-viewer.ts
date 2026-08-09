@@ -51,6 +51,7 @@ export class VehicleScene {
   private corvetteRefinementGroup?: THREE.Group;
   private supraRefinementGroup?: THREE.Group;
   private disableDirectionalGroundShadow = false;
+  private loadGeneration = 0;
 
   constructor(private container: HTMLElement, callbacks: ViewerCallbacks = {}) {
     this.callbacks = callbacks;
@@ -188,6 +189,10 @@ export class VehicleScene {
     accent: string,
     proceduralModel?: ProceduralVehicle,
   ) {
+    if (this.disposed) return;
+    const generation = ++this.loadGeneration;
+    const isCurrentLoad = () => !this.disposed && generation === this.loadGeneration;
+
     this.callbacks.onLoading?.(true);
     this.callbacks.onProgress?.(0);
     this.clearRoot();
@@ -210,6 +215,8 @@ export class VehicleScene {
       const rig = createJeepWranglerProcedural(accent);
       this.currentJeepRig = rig;
       this.root.add(rig.group);
+      rig.group.updateMatrixWorld(true);
+      this.vehicleBounds.setFromObject(rig.group);
       this.setLights(this.lightsEnabled);
       this.callbacks.onFallback?.(false);
       this.callbacks.onLoading?.(false);
@@ -222,10 +229,11 @@ export class VehicleScene {
           this.loader.load(
             modelUrl,
             (loadedGltf) => {
-              this.callbacks.onProgress?.(null);
+              if (isCurrentLoad()) this.callbacks.onProgress?.(null);
               resolve(loadedGltf);
             },
             (event) => {
+              if (!isCurrentLoad()) return;
               const total = event.total || 0;
               this.callbacks.onProgress?.(total > 0 ? Math.min(100, (event.loaded / total) * 100) : null);
             },
@@ -233,6 +241,10 @@ export class VehicleScene {
           );
         });
         const model = gltf.scene;
+        if (!isCurrentLoad()) {
+          this.disposeObjectResources(model);
+          return;
+        }
         this.prepareLoadedModel(model, accent);
         this.root.add(model);
         this.renderer.compile(this.scene, this.camera);
@@ -242,11 +254,16 @@ export class VehicleScene {
         this.callbacks.onLoading?.(false);
         return;
       } catch (error) {
+        if (!isCurrentLoad()) return;
         console.error("No se pudo cargar el modelo GLB", error);
       }
     }
 
-    this.root.add(this.createGenericVehicle(accent));
+    if (!isCurrentLoad()) return;
+    const genericVehicle = this.createGenericVehicle(accent);
+    this.root.add(genericVehicle);
+    genericVehicle.updateMatrixWorld(true);
+    this.vehicleBounds.setFromObject(genericVehicle);
     this.callbacks.onFallback?.(true);
     this.callbacks.onLoading?.(false);
   }
@@ -1351,6 +1368,13 @@ export class VehicleScene {
 
   setPaintColor(color: string) {
     const next = new THREE.Color(color);
+    if (this.currentJeepRig) {
+      this.currentJeepRig.paintMaterials[0]?.color.copy(next);
+      this.currentJeepRig.paintMaterials[1]?.color.copy(next).offsetHSL(0, 0, -0.075);
+      this.currentJeepRig.paintMaterials.forEach((material) => {
+        material.needsUpdate = true;
+      });
+    }
     this.paintMaterials.forEach((material) => {
       material.color.copy(next);
       material.needsUpdate = true;
@@ -1550,33 +1574,48 @@ export class VehicleScene {
     this.animationFrame = requestAnimationFrame(this.animate);
   };
 
-  private clearRoot() {
+  private disposeObjectResources(root: THREE.Object3D) {
     const geometries = new Set<THREE.BufferGeometry>();
     const materials = new Set<THREE.Material>();
+    const textures = new Set<THREE.Texture>();
 
-    while (this.root.children.length) {
-      const child = this.root.children.pop();
-      child?.traverse((object) => {
-        if (!(object instanceof THREE.Mesh)) return;
-        geometries.add(object.geometry);
-        const objectMaterials = Array.isArray(object.material) ? object.material : [object.material];
-        objectMaterials.forEach((material) => materials.add(material));
+    root.traverse((object) => {
+      if (!(object instanceof THREE.Mesh)) return;
+      geometries.add(object.geometry);
+      const objectMaterials = Array.isArray(object.material) ? object.material : [object.material];
+      objectMaterials.forEach((material) => {
+        materials.add(material);
+        Object.values(material).forEach((value) => {
+          if (value instanceof THREE.Texture) textures.add(value);
+        });
       });
-    }
+    });
 
     geometries.forEach((geometry) => geometry.dispose());
     materials.forEach((material) => material.dispose());
+    textures.forEach((texture) => texture.dispose());
+  }
+
+  private clearRoot() {
+    this.disposeObjectResources(this.root);
+    this.root.clear();
   }
 
   dispose() {
     this.disposed = true;
+    this.loadGeneration += 1;
+    this.callbacks = {};
     cancelAnimationFrame(this.animationFrame);
     this.resizeObserver.disconnect();
     this.intersectionObserver?.disconnect();
     this.controls.dispose();
     this.clearRoot();
+    if (this.contactShadow) this.disposeObjectResources(this.contactShadow);
+    if (this.shadowCatcher) this.disposeObjectResources(this.shadowCatcher);
     this.environmentTexture?.dispose();
     this.backgroundTexture?.dispose();
+    this.scene.environment = null;
+    this.renderer.renderLists.dispose();
     this.renderer.dispose();
     this.renderer.domElement.remove();
   }

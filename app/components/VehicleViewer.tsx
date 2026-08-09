@@ -81,7 +81,11 @@ export function VehicleViewer({ vehicle, locale }: { vehicle: Vehicle; locale: L
 
     void import("../lib/three/vehicle-viewer").then(({ VehicleScene: Scene }) => {
       if (cancelled || !mountRef.current) return;
-      scene = new Scene(mountRef.current, { onLoading: setLoading, onProgress: setProgress, onFallback: setFallback });
+      scene = new Scene(mountRef.current, {
+        onLoading: (value) => { if (!cancelled) setLoading(value); },
+        onProgress: (value) => { if (!cancelled) setProgress(value); },
+        onFallback: (value) => { if (!cancelled) setFallback(value); },
+      });
       sceneRef.current = scene;
       void scene.setVehicle(vehicle.model3d, vehicle.accent, vehicle.proceduralModel);
     });

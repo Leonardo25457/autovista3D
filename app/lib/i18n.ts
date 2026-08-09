@@ -44,6 +44,12 @@ export const dictionary = {
     side: "Lateral",
     rear: "Posterior",
     bottom: "Abajo",
+    unavailable: "No disponible",
+    modelBy: "Modelo 3D por",
+    modelSource: "Fuente y licencia",
+    nonCommercialModel: "Este modelo no permite uso comercial.",
+    verifiedRecord: "Ficha verificable por número de stock",
+    verifiedVinRecord: "Ficha verificable por VIN y número de stock",
   },
   en: {
     inventory: "Inventory",
@@ -82,6 +88,12 @@ export const dictionary = {
     side: "Side",
     rear: "Rear",
     bottom: "Bottom",
+    unavailable: "Unavailable",
+    modelBy: "3D model by",
+    modelSource: "Source and license",
+    nonCommercialModel: "This model does not allow commercial use.",
+    verifiedRecord: "Listing verifiable by stock number",
+    verifiedVinRecord: "Listing verifiable by VIN and stock number",
   },
 } as const;
 

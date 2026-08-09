@@ -3,6 +3,7 @@ import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeom
 
 export type JeepWranglerRig = {
   group: THREE.Group;
+  paintMaterials: THREE.MeshPhysicalMaterial[];
   headlightMaterials: THREE.MeshStandardMaterial[];
   tailLightMaterials: THREE.MeshStandardMaterial[];
 };
@@ -867,6 +868,7 @@ export function createJeepWranglerProcedural(accent: string): JeepWranglerRig {
 
   return {
     group: jeep,
+    paintMaterials: [materials.paint, materials.paintDark],
     headlightMaterials,
     tailLightMaterials,
   };
