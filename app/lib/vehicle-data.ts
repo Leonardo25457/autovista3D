@@ -170,13 +170,13 @@ export const vehicles: Vehicle[] = [
       "/vehicles/toyota-4runner/03.webp",
       "/vehicles/toyota-4runner/04.webp",
     ],
-    model3d: "/models/toyota-4runner/2019-toyota-4runner-optimized.glb",
+    model3d: "/models/toyota-4runner/2019-toyota-4runner-web-v2.glb",
     modelFeatures: {
       paintCustomization: true,
       lights: true,
     },
     modelStats: {
-      fileSizeMb: 11.1,
+      fileSizeMb: 9.44,
       triangles: 878504,
       materials: 10,
       textures: 0,
